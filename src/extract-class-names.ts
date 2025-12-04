@@ -33,15 +33,21 @@ export default function extractClassNames(css: string): Set<string> {
 function parse(css: string) {
   try {
     return postcss.parse(css);
-  } catch {}
+  } catch {
+    // fall back to postcss-scss and postcss-less
+  }
 
   try {
     return postcssScss.parse(css);
-  } catch {}
+  } catch {
+    // fall back to postcss-less
+  }
 
   try {
     return postcssLess.parse(css);
-  } catch {}
+  } catch {
+    // fall back to postcss
+  }
 
   throw new Error("Failed to parse CSS");
 }
