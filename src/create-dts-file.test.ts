@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import createDtsFile from "./create-dts-file";
+import createDtsFile from "./create-dts-file.js";
 
 test("creates a default export", () => {
   const classNames = new Set(["foo", "bar", "baz"]);

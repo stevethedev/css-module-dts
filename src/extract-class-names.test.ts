@@ -1,8 +1,8 @@
 import { test, expect } from "vitest";
-import extractClassNames from "./extract-class-names";
+import extractClassNames from "./extract-class-names.js";
 
 test("it extracts class names from CSS files", () => {
-    const css = `
+  const css = `
     .foo { color: red; }
     .bar { color: blue;
         .baz { color: green; } 
@@ -12,37 +12,69 @@ test("it extracts class names from CSS files", () => {
     main { color: orange; }
     `;
 
-    expect(extractClassNames(css)).toEqual(new Set(['foo', 'bar', 'baz', 'first', 'second']))
+  expect(extractClassNames(css)).toEqual(
+    new Set(["foo", "bar", "baz", "first", "second"]),
+  );
 });
 
 test("it handles complex CSS", () => {
-    const css = getCss();
-    expect(extractClassNames(css)).toEqual(new Set(["card__subtitle", "btn", "secondary", "flex", "center", "card", "card__title"]))
-})
+  const css = getCss();
+  expect(extractClassNames(css)).toEqual(
+    new Set([
+      "card__subtitle",
+      "btn",
+      "secondary",
+      "flex",
+      "center",
+      "card",
+      "card__title",
+    ]),
+  );
+});
 
 test("extracts class names from SCSS files", () => {
-    const scss = `
+  const scss = `
     @use "@lib/ui-styles/color";
     .foo { color: red; }
     .bar { color: blue;
     .baz { color: green; } }
     `;
 
-    expect(extractClassNames(scss)).toEqual(new Set(['foo', 'bar', 'baz']));
-})
+  expect(extractClassNames(scss)).toEqual(new Set(["foo", "bar", "baz"]));
+});
 
 test("it handles complex SCSS", () => {
-    const css = getSass();
-    expect(extractClassNames(css)).toEqual(new Set(["actions", "card__subtitle", "btn", "secondary", "card", "card__title"]))
-})
+  const css = getSass();
+  expect(extractClassNames(css)).toEqual(
+    new Set([
+      "actions",
+      "card__subtitle",
+      "btn",
+      "secondary",
+      "card",
+      "card__title",
+    ]),
+  );
+});
 
 test("it handles complex LESS", () => {
-    const css = getLess();
-    expect(extractClassNames(css)).toEqual(new Set(["actions", "card__subtitle", "box-shadow", "button", "btn", "secondary", "card", "card__title"]))
-})
+  const css = getLess();
+  expect(extractClassNames(css)).toEqual(
+    new Set([
+      "actions",
+      "card__subtitle",
+      "box-shadow",
+      "button",
+      "btn",
+      "secondary",
+      "card",
+      "card__title",
+    ]),
+  );
+});
 
 function getCss() {
-    return `
+  return `
         /* CSS with custom properties, utility classes, and responsive rules */
         :root{
           --color-bg: #0f1724;
@@ -119,11 +151,11 @@ function getCss() {
           .card { padding: calc(var(--gap) * 0.9); }
           .card__title { font-size: 1rem; }
         }
-    `
+    `;
 }
 
 function getSass() {
-    return `
+  return `
         // SCSS using variables, nesting, mixins, functions, placeholder and responsive mixin
         
         $color-bg: #0f1724;
@@ -200,11 +232,11 @@ function getSass() {
           :root { --gap: 12px; }
           .card { padding: $gap * 0.8; &__title { font-size: rem(16); } }
         }
-    `
+    `;
 }
 
 function getLess() {
-    return `
+  return `
         // LESS with variables, parametric mixin, guards, nested rules
         
         @color-bg: #0f1724;
@@ -263,5 +295,5 @@ function getLess() {
         @media (max-width: 640px) {
           .card { padding: (@gap * 0.9); &__title { font-size: 1rem; } }
         }
-    `
+    `;
 }

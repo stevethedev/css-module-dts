@@ -3,20 +3,21 @@
   "version": "0.1.0",
   "description": "Generate .d.ts files for CSS modules",
   "bin": "dist/cli.js",
+  "license": "MIT",
+  "type": "module",
   "author": {
     "name": "Steven Jimenez",
     "email": "stevenmjimenez@gmail.com"
   },
   "scripts": {
+    "build": "tsc -p tsconfig.json",
     "test": "vitest"
   },
-  "license": "MIT",
-  "type": "module",
   "devDependencies": {
+    "@types/node": "^24.10.1",
     "@types/postcss-less": "^4.0.7",
     "prettier": "^3.7.4",
     "typescript": "^5.9.3",
-    "vite": "^7.2.6",
     "vitest": "^4.0.15"
   },
   "dependencies": {
