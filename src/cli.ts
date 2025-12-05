@@ -1,32 +1,40 @@
-import { readFile } from "node:fs/promises";
-import { join, relative } from "node:path";
-import { glob } from "glob";
-import createDtsFile from "./create-dts-file.js";
-import extractClassNames from "./extract-class-names.js";
+import { writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { cwd, stdout } from "node:process";
+import { command, positional, option, optional, string, run } from "cmd-ts";
+import extractCssModules from "./extract-css-modules.js";
 
-extractCssModules(
-  "C:\\Users\\steve\\IdeaProjects\\dnd-helper",
-  "**/*.module.scss",
-).then(console.log);
+const cmd = command({
+  name: "css-module-dts",
+  args: {
+    pattern: option({
+      short: "p",
+      long: "pattern",
+      type: string,
+      defaultValue: () => "**/*.module.{css,sass,scss,less}",
+    }),
+    write: option({
+      short: "w",
+      long: "write",
+      type: optional(string),
+    }),
+    rootDir: positional({
+      type: string,
+      description: "Root directory to scan for modules",
+      displayName: "rootDir",
+    }),
+  },
+  handler: async ({ rootDir, pattern, write }) => {
+    const absoluteRootDir = resolve(cwd(), rootDir);
+    const result = await extractCssModules(absoluteRootDir, pattern);
 
-async function extractCssModules(rootDir: string, globPattern: string) {
-  const files = await glob(toPosixPath(join(rootDir, globPattern)), {
-    absolute: true,
-  });
+    if (write) {
+      await writeFile(write, result, { encoding: "utf-8" });
+      return;
+    }
 
-  const processedFiles = await Promise.all(
-    files.map((file) => processFile(rootDir, file)),
-  );
+    stdout.write(result);
+  },
+});
 
-  return processedFiles.join("\n\n");
-}
-
-async function processFile(rootDir: string, fileName: string): Promise<string> {
-  const content = await readFile(fileName, "utf-8");
-  const classNames = extractClassNames(content);
-  return createDtsFile(toPosixPath(relative(rootDir, fileName)), classNames);
-}
-
-function toPosixPath(path: string) {
-  return path.split("\\").join("/");
-}
+void run(cmd, process.argv.slice(2));
