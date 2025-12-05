@@ -1,5 +1,5 @@
 import { readFile } from "node:fs/promises";
-import { join, relative } from "node:path";
+import { join } from "node:path";
 import { glob } from "glob";
 import createDtsFile from "./create-dts-file.js";
 import extractClassNames from "./extract-class-names.js";
@@ -14,16 +14,18 @@ export default async function extractCssModules(
   });
 
   const processedFiles = await Promise.all(
-    files.map((file) => processFile(rootDir, file)),
+    files.map(
+      async (file) => [`${file}.d.ts`, await processFile(file)] as const,
+    ),
   );
 
-  return processedFiles.join("\n\n");
+  return new Map(processedFiles);
 }
 
-async function processFile(rootDir: string, fileName: string): Promise<string> {
+async function processFile(fileName: string): Promise<string> {
   const content = await readFile(fileName, "utf-8");
   const classNames = extractClassNames(content);
-  return createDtsFile(toPosixPath(relative(rootDir, fileName)), classNames);
+  return createDtsFile(classNames);
 }
 
 function toPosixPath(path: string) {

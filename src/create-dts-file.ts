@@ -1,7 +1,6 @@
-export default function createDtsFile(
-  moduleName: string,
-  classNames: Set<string>,
-): string {
+import { createHash } from "node:crypto";
+
+export default function createDtsFile(classNames: Set<string>): string {
   const classNameArray: string[] = Array.from(classNames).toSorted();
   const constExports = classNameArray
     .map((className): string | null => {
@@ -13,15 +12,40 @@ export default function createDtsFile(
       }
     })
     .filter((v): v is string => typeof v === "string")
-    .map((className) => `\n  export const ${className}: string;`)
-    .join("");
+    .map((className) => `export const ${className}: string;`)
+    .join("\n");
 
+  const defaultExport = getDefaultExport(classNames);
+  const separator = constExports && defaultExport ? "\n" : "";
+  return `${constExports}${separator}${defaultExport}\n`;
+}
+
+function getDefaultExport(classNames: Set<string>): string {
+  const classNameArray: string[] = Array.from(classNames).toSorted();
   const defaultNames = classNameArray
     .map((cn) => JSON.stringify(cn))
     .join(" | ");
-  const defaultExport = defaultNames.length
-    ? `\n  export default {} as Record<${defaultNames}, string>;`
-    : "";
-  const exports = `${constExports}${defaultExport}`;
-  return `declare namespace ${JSON.stringify(moduleName)} {${exports}\n}\n`;
+
+  if (!defaultNames.length) {
+    return "";
+  }
+
+  const defaultExportName = getDefaultExportName(classNames);
+  return `\ndeclare const ${defaultExportName}: Record<${defaultNames}, string>;\nexport default ${defaultExportName};`;
+}
+
+function getDefaultExportName(classNames: Set<string>): string {
+  const baseExportName = "classes";
+
+  let defaultExportName = baseExportName;
+  const classNamesArray = Array.from(classNames);
+  while (classNames.has(defaultExportName)) {
+    const hashedClassNames = classNamesArray.join(";");
+    const hashed = createHash("sha1")
+      .update(defaultExportName + hashedClassNames)
+      .digest("hex")
+      .slice(0, 6);
+    defaultExportName = `${baseExportName}${hashed}`;
+  }
+  return defaultExportName;
 }
