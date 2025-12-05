@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { cwd, stdout } from "node:process";
