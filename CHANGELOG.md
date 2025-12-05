@@ -1,5 +1,11 @@
 # css-module-dts
 
+## 0.1.4
+
+### Patch Changes
+
+- 7dbb19e: Include non-module files in d.ts file generation
+
 ## 0.1.3
 
 ### Patch Changes
