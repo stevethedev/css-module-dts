@@ -1,5 +1,11 @@
 # css-module-dts
 
+## 0.1.3
+
+### Patch Changes
+
+- 57de38e: Create multiple d.ts files instead of consolidating into a single massive d.ts file
+
 ## 0.1.2
 
 ### Patch Changes
