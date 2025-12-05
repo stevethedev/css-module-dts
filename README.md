@@ -92,24 +92,48 @@ import extractCssModules from './dist/extract-css-modules.js';
 // or during dev after build:
 // import extractCssModules from './src/extract-css-modules.js';
 
-Tests
+## CI / Release (GitHub Actions)
+
+This repository includes GitHub Actions workflows to run CI and publish releases:
+
+- `.github/workflows/ci.yml` — runs on push and pull requests to `main`. It installs dependencies, runs `npm run check`, runs tests, and builds the project.
+- `.github/workflows/release.yml` — runs on push to `main` and uses Changesets to create releases and publish to npm. It expects `NPM_TOKEN` and uses the default `GITHUB_TOKEN` provided by Actions.
+- `.github/workflows/publish-manual.yml` — a manual `workflow_dispatch` workflow that builds and publishes the package. It accepts an optional `tag` input for dist tags.
+
+Required repository secrets
+
+- `NPM_TOKEN` — an npm automation token with publish access. Add this in the repository Settings → Secrets and variables → Actions.
+- `GITHUB_TOKEN` — automatically provided to workflows; no action needed.
+
+Manual publish
+
+To manually publish the package from the Actions UI, go to the `Actions` tab, select `Manual publish`, click `Run workflow`, and optionally set a `tag` (like `next`).
+
+Notes
+
+- The release workflow uses Changesets. Ensure you create Changesets (e.g., `npx changeset`) when you want to release new versions.
+- The workflows assume `npm publish --access public`. If you need a different registry or publish command, update the workflow files accordingly.
+
+## Tests
 
 Run the test suite with:
 
+```shell
 npm test
+```
 
-Contributing
+## Contributing
 
 Contributions welcome — please open issues or PRs. A few suggestions:
 
 - Run formatting/lint checks before committing: `npm run fix` / `npm run check`
 - Add tests for parsing edge-cases when adding features
 
-License
+## License
 
 MIT — see the `license` field in package.json.
 
-Notes and assumptions
+## Notes and assumptions
 
 - This project uses ESM ("type": "module") and expects a relatively recent Node.js that supports ESM imports (Node 14+ recommended).
 - The CLI specified in package.json points to `dist/cli.js`; make sure to run `npm run build` before using the local CLI.
