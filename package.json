@@ -2,9 +2,11 @@
   "name": "css-module-dts",
   "version": "0.1.1",
   "description": "Generate .d.ts files for CSS modules",
-  "bin": "dist/cli.js",
+  "bin": {
+    "css-module-dts": "dist/cli.js"
+  },
   "repository": {
-    "url": "https://github.com/stevethedev/css-module-dts",
+    "url": "git+https://github.com/stevethedev/css-module-dts.git",
     "type": "git"
   },
   "keywords": [
