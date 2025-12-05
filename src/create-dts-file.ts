@@ -1,8 +1,6 @@
-import { hash } from 'node:crypto'
+import { hash } from "node:crypto";
 
-export default function createDtsFile(
-  classNames: Set<string>,
-): string {
+export default function createDtsFile(classNames: Set<string>): string {
   const classNameArray: string[] = Array.from(classNames).toSorted();
   const constExports = classNameArray
     .map((className): string | null => {
@@ -28,7 +26,7 @@ function getDefaultExport(classNames: Set<string>): string {
     .join(" | ");
 
   if (!defaultNames.length) {
-      return "";
+    return "";
   }
 
   const defaultExportName = getDefaultExportName(classNames);
@@ -36,14 +34,16 @@ function getDefaultExport(classNames: Set<string>): string {
 }
 
 function getDefaultExportName(classNames: Set<string>): string {
-    const baseExportName = "classes";
+  const baseExportName = "classes";
 
-    let defaultExportName = baseExportName;
-    const classNamesArray = Array.from(classNames);
-    while(classNames.has(defaultExportName)) {
-        const hashedClassNames = classNamesArray.join(";");
-        const hashed = hash("sha1_hex", defaultExportName + hashedClassNames).toString().slice(0, 6);
-        defaultExportName = `${baseExportName}${hashed}`;
-    }
-    return defaultExportName;
+  let defaultExportName = baseExportName;
+  const classNamesArray = Array.from(classNames);
+  while (classNames.has(defaultExportName)) {
+    const hashedClassNames = classNamesArray.join(";");
+    const hashed = hash("sha1_hex", defaultExportName + hashedClassNames)
+      .toString()
+      .slice(0, 6);
+    defaultExportName = `${baseExportName}${hashed}`;
+  }
+  return defaultExportName;
 }

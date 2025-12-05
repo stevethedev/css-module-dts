@@ -14,7 +14,9 @@ export default async function extractCssModules(
   });
 
   const processedFiles = await Promise.all(
-    files.map(async (file) => [`${file}.d.ts`, await processFile(file)] as const),
+    files.map(
+      async (file) => [`${file}.d.ts`, await processFile(file)] as const,
+    ),
   );
 
   return new Map(processedFiles);
