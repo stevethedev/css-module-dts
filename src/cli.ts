@@ -22,7 +22,7 @@ const cmd = command({
       long: "pattern",
       description: "Glob pattern to match CSS modules",
       type: string,
-      defaultValue: () => "**/*.module.{css,sass,scss,less}",
+      defaultValue: () => "**/*.{css,sass,scss,less}",
     }),
     write: flag({
       short: "w",
