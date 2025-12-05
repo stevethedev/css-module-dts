@@ -1,4 +1,4 @@
-import { hash } from "node:crypto";
+import { createHash } from "node:crypto";
 
 export default function createDtsFile(classNames: Set<string>): string {
   const classNameArray: string[] = Array.from(classNames).toSorted();
@@ -16,7 +16,8 @@ export default function createDtsFile(classNames: Set<string>): string {
     .join("\n");
 
   const defaultExport = getDefaultExport(classNames);
-  return `${constExports}${defaultExport}\n`;
+  const separator = constExports && defaultExport ? "\n" : "";
+  return `${constExports}${separator}${defaultExport}\n`;
 }
 
 function getDefaultExport(classNames: Set<string>): string {
@@ -40,8 +41,9 @@ function getDefaultExportName(classNames: Set<string>): string {
   const classNamesArray = Array.from(classNames);
   while (classNames.has(defaultExportName)) {
     const hashedClassNames = classNamesArray.join(";");
-    const hashed = hash("sha1_hex", defaultExportName + hashedClassNames)
-      .toString()
+    const hashed = createHash("sha1")
+      .update(defaultExportName + hashedClassNames)
+      .digest("hex")
       .slice(0, 6);
     defaultExportName = `${baseExportName}${hashed}`;
   }

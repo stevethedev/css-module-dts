@@ -50,8 +50,16 @@ test("holistic generation", () => {
 export const bar: string;
 export const baz: string;
 export const foo: string;
+
 declare const classes: Record<"123" | "bar" | "baz" | "foo", string>;
 export default classes;
 `.slice(1),
   );
+});
+
+test("handles collision with 'classes' class name", () => {
+  const classNames = new Set(["classes", "foo", "bar"]);
+  const fileContent = createDtsFile(classNames);
+  // Should use a hashed name like 'classesXXXXXX' instead of 'classes'
+  expect(fileContent).toMatch(/declare const classes[a-f0-9]{6}: Record</);
 });
