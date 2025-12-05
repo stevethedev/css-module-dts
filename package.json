@@ -30,7 +30,7 @@
     "check:lint": "eslint --max-warnings=0",
     "check:format": "prettier --check .",
     "check:types": "npx tsc --noEmit",
-    "check:dependencies": "knip --check",
+    "check:dependencies": "knip",
     "fix": "npm-run-all fix:*",
     "fix:lint": "eslint --fix --max-warnings=0",
     "fix:format": "prettier --write .",
