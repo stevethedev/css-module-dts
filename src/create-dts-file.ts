@@ -1,23 +1,23 @@
 import { createHash } from "node:crypto";
 
 export default function createDtsFile(classNames: Set<string>): string {
-  const classNameArray: string[] = Array.from(classNames).toSorted();
-  const constExports = classNameArray
-    .map((className): string | null => {
-      try {
-        const fn = new Function(className, `return ${className};`);
-        return fn(className);
-      } catch {
-        return null;
-      }
-    })
-    .filter((v): v is string => typeof v === "string")
-    .map((className) => `export const ${className}: string;`)
-    .join("\n");
-
+  const constExports = getNamedExports(classNames);
   const defaultExport = getDefaultExport(classNames);
-  const separator = constExports && defaultExport ? "\n" : "";
-  return `${constExports}${separator}${defaultExport}\n`;
+  return `${constExports}\n${defaultExport}\n`;
+}
+
+function getNamedExports(classNames: Set<string>): string {
+    return Array.from(classNames).toSorted()
+        .map((className): string | null => {
+            try {
+                const fn = new Function(className, `return ${className};`);
+                fn(className);
+                return `export const ${className}: string;`
+            } catch {
+                return `// Cannot create named export for ${className}`
+            }
+        })
+        .join("\n");
 }
 
 function getDefaultExport(classNames: Set<string>): string {
@@ -27,7 +27,7 @@ function getDefaultExport(classNames: Set<string>): string {
     .join(" | ");
 
   if (!defaultNames.length) {
-    return "";
+    return "\n// No default export\n";
   }
 
   const defaultExportName = getDefaultExportName(classNames);
