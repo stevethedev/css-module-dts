@@ -7,17 +7,18 @@ export default function createDtsFile(classNames: Set<string>): string {
 }
 
 function getNamedExports(classNames: Set<string>): string {
-    return Array.from(classNames).toSorted()
-        .map((className): string | null => {
-            try {
-                const fn = new Function(className, `return ${className};`);
-                fn(className);
-                return `export const ${className}: string;`
-            } catch {
-                return `// Cannot create named export for ${className}`
-            }
-        })
-        .join("\n");
+  return Array.from(classNames)
+    .toSorted()
+    .map((className): string | null => {
+      try {
+        const fn = new Function(className, `return ${className};`);
+        fn(className);
+        return `export const ${className}: string;`;
+      } catch {
+        return `// Cannot create named export for ${className}`;
+      }
+    })
+    .join("\n");
 }
 
 function getDefaultExport(classNames: Set<string>): string {
